@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Clock } from "./Clock"
+import config from "./common/config.json" 
 
 const Clocks:React.FC = () => {
     const [time, setTime] = useState<Date>(new Date())
@@ -12,10 +13,7 @@ const Clocks:React.FC = () => {
    }, [])
     return <div style={{display: 'flex',
      flexDirection: 'row', justifyContent: 'space-around'}}>
-       <Clock time={time} region="Europe/Dublin"/>
-       <Clock time={time} region="Europe/Berlin" />
-       <Clock time={time} region="Asia/Jerusalem"/>
-       <Clock time={time} region="Australia/Brisbane"/>
+    {config.timezones.map((e) => (<Clock time={time} region={e} />))}
     </div>
 }
 export default Clocks
