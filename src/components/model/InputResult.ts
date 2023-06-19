@@ -1,5 +1,6 @@
+import {StatusType} from "../model/StatusType";
 type InputResult = {
-    status: "error" | "success" | "warning",
+    status:  StatusType,
     message?: string
 }
 export default InputResult;
