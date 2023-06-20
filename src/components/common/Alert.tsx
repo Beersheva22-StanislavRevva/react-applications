@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import {StatusType} from "../model/StatusType";
+import {StatusType} from "../../model/StatusType";
 
 type Props = {
     status: StatusType;

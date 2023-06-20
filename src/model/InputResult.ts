@@ -1,4 +1,4 @@
-import {StatusType} from "../model/StatusType";
+import {StatusType} from "./StatusType";
 type InputResult = {
     status:  StatusType,
     message?: string

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import InputResult from "../model/InputResult";
-import { StatusType } from "../model/StatusType";
+import InputResult from "../../model/InputResult";
+import { StatusType } from "../../model/StatusType";
 import "./Input.css"
 import Alert from "./Alert";
 
