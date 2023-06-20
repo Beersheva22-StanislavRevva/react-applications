@@ -1,10 +1,17 @@
 import { ReactNode } from "react"
+import lifeConfig from '../config/life-game-config.json'
+const {dimension, tick} = lifeConfig;
+const windowInnerWidth = window.innerWidth;
+const windowInnerHeight = window.innerHeight;
+const number = windowInnerHeight < windowInnerWidth 
+? String(100/dimension*0.9)+'vh'
+: String(100/dimension*0.9)+'vw';
 
 const Row: React.FC<{row: number[]}> = ({row}) => {
     function getDivs(): ReactNode {
         return row.map((num, index) =>
-         <div key = {index} style = {{width:10, height:10, backgroundColor: num ?
-             'black': 'white', border: 'solid 1 px gray'}}></div>)
+         <div key = {index} style = {{width: number, height: number, backgroundColor: num ?
+             'black': 'white', border: 'solid 1px gray'}}></div>)
     }
     return <section style = {{display:'flex'}}>
         {getDivs()}

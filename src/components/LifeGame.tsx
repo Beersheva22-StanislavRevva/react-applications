@@ -10,7 +10,14 @@ const lifeMatrix = useRef<LifeMatrix>();
 const[numbers,setNumbers] = useState<number[][]>([]);
 function tickFn():void {
     if(!lifeMatrix.current) {
-        lifeMatrix.current = new LifeMatrix(getRandomMatrix(dimension, dimension, 0 ,2))
+        lifeMatrix.current = new LifeMatrix(getRandomMatrix(dimension, dimension, 0 ,2));
+        // [
+        //     [0,0,0,0,0],
+        //     [0,0,1,0,0],
+        //     [0,0,1,0,0],
+        //     [0,0,1,0,0],
+        //     [0,0,0,0,0]
+        // ])
         setNumbers(lifeMatrix.current.numbers)
     } else {
         setNumbers(lifeMatrix.current.next())
