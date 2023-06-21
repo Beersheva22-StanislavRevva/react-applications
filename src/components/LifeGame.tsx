@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import LifeMatrix from "../service/LifeMatrix";
 import Matrix from "./Matrix";
 import lifeConfig from '../config/life-game-config.json'
-import { getRandomMatrix } from "../Util/random";
+import { getRandomMatrix, getStableMatrix } from "../Util/random";
+import { getSystemErrorMap } from "util";
 const {dimension, tick} = lifeConfig;
 
 const LifeGame: React.FC = () => {
@@ -10,14 +11,10 @@ const lifeMatrix = useRef<LifeMatrix>();
 const[numbers,setNumbers] = useState<number[][]>([]);
 function tickFn():void {
     if(!lifeMatrix.current) {
-        lifeMatrix.current = new LifeMatrix(getRandomMatrix(dimension, dimension, 0 ,2));
-        // [
-        //     [0,0,0,0,0],
-        //     [0,0,1,0,0],
-        //     [0,0,1,0,0],
-        //     [0,0,1,0,0],
-        //     [0,0,0,0,0]
-        // ])
+        lifeMatrix.current = new LifeMatrix(
+        //getStableMatrix(dimension,dimension)
+        getRandomMatrix(dimension, dimension, 0 ,2)
+        );
         setNumbers(lifeMatrix.current.numbers)
     } else {
         setNumbers(lifeMatrix.current.next())

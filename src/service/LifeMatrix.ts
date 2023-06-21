@@ -18,7 +18,7 @@ stoplist:number[][];
         return element = 1 ? element = this.isModifiedLiveCell(i, j) : element = this.isModifiedDeadCell(i, j);
     }
     isModifiedLiveCell(i:number,j:number):number {
-       const res = this.calcLiveCell(i , j); 
+       const res = this.calcLiveCell(i, j); 
        if (res === this._numbers[i][j]) {
         this.addToStoplist(i, j);
        }
@@ -36,8 +36,13 @@ stoplist:number[][];
         this.stoplist.push(index);
     }
     calcLiveCell(i:number,j:number):number {
-    const sum = this.calcSum(i, j);
+        const sum = this.calcSum(i, j);
         return (sum - 1) < 2 || (sum - 1) > 3 ? 0 : 1;
+    }
+    calcDeadCell(i:number,j:number):number {
+        let sum: number;
+        sum = this.calcSum(i, j);
+        return sum == 3 ? 1 : 0;
     }
     private calcSum(j: number, i: number):number {
         let sum: number = 0;
@@ -55,9 +60,4 @@ stoplist:number[][];
        res = res > this._numbers.length - 1 ? 0 : res;
         return res;
     }
-    calcDeadCell(i:number,j:number):number {
-        let sum: number;
-        sum = this.calcSum(i, j);
-        return sum == 3 ? 1 : 0;
-    }
-}
+} 

@@ -32,3 +32,13 @@ export function getRandomMatrix(rows, columns, min, max) {
 export function getRandomArrayIntNumbers(nNumbers, min, max) {
     return Array.from({length:nNumbers}).map(() => getRandomInt(min, max));
 }
+export function getStableMatrix (rows, columns) {
+   let res = Array.from({length:rows}).map(() => getStableArrayIntNumbers(columns));
+   const horCent = Math.trunc(rows/2);
+   const verCent = Math.trunc(columns/2);
+   res[horCent-1][verCent] = res[horCent][verCent] = res[horCent+1][verCent] = 1
+   return res;    
+}
+export function getStableArrayIntNumbers (nNumbers) {
+    return Array.from({length:nNumbers}).map(() => 0);
+}
