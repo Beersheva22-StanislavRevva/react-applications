@@ -10,12 +10,30 @@ test("sum of matrix", () => {
 test("range test", () => {
  expect(range(1,3)).toEqual([1,2])
 })
-const lifeMatrix = new LifeMatrix(expected);
-let expected = [[0,0,0,0],
-                [0,1,1,0],
+              
+test("stable matrix test", () => {
+  let expected = [[0,0,0,0],
+                 [0,1,1,0],
                 [0,1,1,0],
                 [0,0,0,0],
-              ]
-test("range test", () => {
-  expect(expected ).toEqual(lifeMatrix.current.next())
+                          ];
+const lifeMatrix = new LifeMatrix(expected);
+const nextLifeMatrix = lifeMatrix.next();
+console.log(lifeMatrix.numbers,"\n", nextLifeMatrix);
+  expect(lifeMatrix.numbers).toEqual(nextLifeMatrix)
+ })
+
+ test("loop matrix test", () => {
+  const expected = [[0,1,0],
+                    [0,1,0],
+                    [0,1,0],
+                            ];
+  const startValue = [[0,0,0],
+                      [1,1,1],
+                      [0,0,0],
+                              ];
+const lifeMatrix = new LifeMatrix(startValue);
+const nextLifeMatrix = lifeMatrix.next();
+console.log(startValue,"\n", nextLifeMatrix);
+
  })
