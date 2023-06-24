@@ -4,9 +4,10 @@ import Home from "./components/pages/Home";
 import Orders from "./components/pages/Orders";
 import Products from "./components/pages/Products";
 import ShoppingCart from "./components/pages/ShoppingCart copy";
-import SignIn from "./components/pages/SignIn copy";
+import SignIn from "./components/pages/SignIn";
 import SignOut from "./components/pages/SignOut";
 import "./App.css";
+import Customers from "./components/pages/Customers";
 
 const App: React.FC = () => {
   
@@ -14,6 +15,8 @@ const App: React.FC = () => {
     <Routes>
       <Route path="/" element={<Navigator/>}>
           <Route index element = {<Home/>}/>
+          <Route path = "home" element = {<Home/>}/>
+          <Route path = "customers" element = {<Customers/>}/>
           <Route path = "orders" element = {<Orders/>}/>
           <Route path = "products" element = {<Products/>}/>
           <Route path = "shoppingcart" element = {<ShoppingCart/>}/>
