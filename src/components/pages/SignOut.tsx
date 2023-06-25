@@ -1,22 +1,10 @@
-import { useDispatch } from "react-redux";
-import { admFlActions } from "../../redux/Slices/admFlSlice";
-import { userFlActions } from "../../redux/Slices/userFlSlice";
-import { useNavigate } from "react-router-dom";
-
+import {useDispatch} from 'react-redux';
+import { authActions } from '../../redux/Slices/authSlice'
 const SignOut: React.FC = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    function signOutFn() {
-    dispatch(admFlActions.setFl(false));
-    dispatch(userFlActions.setFl(false));
-    navigate("/");
-    }
-return <p className="component-logo">
-<div>Sign out Component</div>
-<button onClick={signOutFn} className="btn">SignOut</button>
-</p>
+    return <button onClick={() => dispatch(authActions.reset())}>confirm sign out</button>
 }
-
-export default SignOut;
+ 
+ export default SignOut;
 
 
