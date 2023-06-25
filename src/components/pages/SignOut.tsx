@@ -1,13 +1,15 @@
 import { useDispatch } from "react-redux";
 import { admFlActions } from "../../redux/Slices/admFlSlice";
 import { userFlActions } from "../../redux/Slices/userFlSlice";
+import { useNavigate } from "react-router-dom";
 
 const SignOut: React.FC = () => {
     const dispatch = useDispatch();
-    
+    const navigate = useNavigate();
     function signOutFn() {
     dispatch(admFlActions.setFl(false));
-    dispatch(userFlActions.setFl(false)); 
+    dispatch(userFlActions.setFl(false));
+    navigate("/");
     }
 return <p className="component-logo">
 <div>Sign out Component</div>
