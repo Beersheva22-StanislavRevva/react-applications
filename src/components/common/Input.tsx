@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import InputResult from "../../model/InputResult";
 import { StatusType } from "../../model/StatusType";
 import "./Input.css"
-import Alert from "./Alert";
+//import Alert from "./Alert";
+import { Alert, Button, TextField } from "@mui/material";
 
 type Props = {
     submitFn: (inputText: string) => InputResult,
@@ -12,7 +13,7 @@ type Props = {
 }
 const Input: React.FC<Props> = ({submitFn,placeholder,buttonTitle, type}) => {
     
-    const inputElementRef = useRef<HTMLInputElement>(null);
+    const inputElementRef = useRef<any>(null);
     const [disabled, setDisabled] = useState<boolean>(true);
     const [message, setMessage] = useState<string>("");
    const status = useRef<StatusType>("success")
@@ -26,15 +27,15 @@ const Input: React.FC<Props> = ({submitFn,placeholder,buttonTitle, type}) => {
         setMessage(res.message || '');
         res.message && setTimeout(() => setMessage(""), 5000); 
     }
-    function onChangeFn() {
-        setDisabled(!inputElementRef.current?.value)
+    function onChangeFn(event: any) {
+        inputElementRef.current = event.target as any
+        setDisabled(!event.target.value)
     }
     return <div>
-        <input type={type || 'text'} placeholder={placeholder} ref = {inputElementRef}
-        onChange = {onChangeFn}/>
+        <TextField size="small" type={type || 'text'} placeholder={placeholder} onChange = {onChangeFn}/>
         
-        <button onClick={onClickFn} disabled = {disabled}>{buttonTitle || 'GO'}</button>
-        {message && <Alert status = {status.current} message = {message}></Alert>}
+        <Button onClick={onClickFn} disabled = {disabled}>{buttonTitle || 'GO'}</Button>
+        {message && <Alert severity = {status.current} >{message}</Alert>}
     </div>
 }
 export default Input;
