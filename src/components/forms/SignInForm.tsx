@@ -15,103 +15,104 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LoginData from '../../model/LoginData';
 import InputResult from '../../model/InputResult';
 import { Alert, Snackbar } from '@mui/material';
-import exp from 'constants';
+import { StatusType } from '../../model/StatusType';
 
 function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://tel-ran.com/">
-        React App
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://tel-ran.com/">
+                Tel-Ran
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
 }
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 type Props = {
-    submitFn:(loginData:LoginData) => Promise<InputResult>
+    submitFn: (loginData: LoginData) => Promise<InputResult>
 }
-
-const SignInForm: React.FC <Props> = ({submitFn}) => {
+const SignInForm: React.FC<Props> = ({ submitFn }) => {
     const message = React.useRef<string>('');
-    const[open,setOpen] = React.useState(false)
-    const severity:any = React.useRef('success');
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email:string = data.get('email')! as string;
-    const password:string = data.get('password')! as string;
-    const result = await submitFn({email, password});
-    message.current = result.message!;
-    severity.current = result.status;   
-    message.current && setOpen(true)
-  };
- 
-  return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            </Box>
-            {message && <Snackbar open={open} autoHideDuration={5000}
-                onClose ={() => setOpen(false)}>
-                    <Alert onClose={()=> setOpen(false)} severity="success">Success message </Alert>
-            </Snackbar>}
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
-  );
-}
+    const [open, setOpen] = React.useState(false);
+    const severity = React.useRef<StatusType>('success');
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const email: string = data.get('email')! as string;
+        const password: string = data.get('password')! as string;
+        const result = await submitFn({ email, password });
+        message.current = result.message!;
+        severity.current = result.status;
+        message.current && setOpen(true);
+    };
 
+    return (
+        <ThemeProvider theme={defaultTheme}>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                        />
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary" />}
+                            label="Remember me"
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Sign In
+                        </Button>
+
+                    </Box>
+                    <Snackbar open={open} autoHideDuration={10000}
+                     onClose={() => setOpen(false)}>
+                        <Alert  onClose = {() => setOpen(false)} severity={severity.current} sx={{ width: '100%' }}>
+                            {message.current}
+                        </Alert>
+                    </Snackbar>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
+        </ThemeProvider>
+    );
+}
 export default SignInForm;

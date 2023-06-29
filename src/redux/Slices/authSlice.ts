@@ -1,8 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 import UserData from '../../model/UserData';
-const AUTH_ITEM = "auth-item";
-function getUserData():UserData {
-    const userDataJson = localStorage.getItem(AUTH_ITEM) || "";
+const AUTH_ITEM = 'auth-item';
+function getUserData(): UserData {
+    const userDataJson = localStorage.getItem(AUTH_ITEM) || '';
     let res: UserData = null;
     if(userDataJson) {
         res = JSON.parse(userDataJson);
@@ -17,11 +17,13 @@ const authSlice = createSlice({
     name: "authState",
     reducers: {
         set: (state, data) => {
-            if(data.payload) {
+            
+            if (data.payload) {
                 localStorage.setItem(AUTH_ITEM, JSON.stringify(data.payload));
-                state.userData = data.payload
+                state.userData = data.payload;
             }
-           
+            
+            
         },
         reset: (state) => {
             state.userData = null;

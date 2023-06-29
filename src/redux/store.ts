@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { authReducer } from "./slices/authSlice";
 import { useSelector } from "react-redux";
-import { authReducer } from "./Slices/authSlice";
 import UserData from "../model/UserData";
 
 export const store = configureStore({
@@ -12,3 +12,4 @@ export function useSelectorAuth() {
     return useSelector<any, UserData>(state => state.authState.userData);
 }
 
+    
