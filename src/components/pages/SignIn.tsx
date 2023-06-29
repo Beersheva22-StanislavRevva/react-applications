@@ -1,13 +1,21 @@
 import { useDispatch } from "react-redux";
-import Input from "../common/Input";
+import LoginData from "../../model/LoginData";
 import InputResult from "../../model/InputResult";
-import { authActions } from '../../redux/Slices/authSlice'
+import { authService } from "../../config/service-config";
+import UserData from "../../model/UserData";
+import { authActions } from "../../redux/Slices/authSlice";
+import SignInForm from "../forms/SignInForm";
+
+
 const SignIn: React.FC = () => {
     const dispatch = useDispatch();
-    return <Input submitFn={function (username: string): InputResult {
-        setTimeout(() => dispatch(authActions.set(username)), 3000);
-        return {status: "success", message:'success'}
-    } } placeholder="username" />
+    async function submitFn(loginData:LoginData) : Promise<InputResult> {
+        const res: UserData = await authService.login(loginData);
+        res && dispatch(authActions.set(res));
+        return {status: res ? 'success' : 'error',
+                message: res ? '' : 'Incorrect Credentials' }
+    }
+    return <SignInForm submitFn = {submitFn}/>
 }
 
  export default SignIn;
