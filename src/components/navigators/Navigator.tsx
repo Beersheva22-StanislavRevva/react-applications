@@ -2,6 +2,7 @@ import { AppBar, Box, Tab, Tabs } from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate} from 'react-router-dom'
 export type RouteType = {
+  order: any;
     to: string, label: string
 }
 const Navigator: React.FC<{ routes: RouteType[] }> = ({routes}) => {

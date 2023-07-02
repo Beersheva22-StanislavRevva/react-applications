@@ -82,16 +82,12 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
                         <TextField
                             margin="normal"
                             required
-                            fullWidth
+                            // fullWidth
                             name="password"
                             label="Password"
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
                         />
                         <Button
                             type="submit"
