@@ -1,17 +1,17 @@
 import Employee from "../../model/Employee";
-import { EmployeeForm } from "../forms/EmployeeForm";
 import InputResult from "../../model/InputResult";
 import { authService, employeesService } from "../../config/service-config";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../redux/slices/authSlice";
+import { RandomEmployeesForm } from "../forms/RandomEmployeesForm";
 
-const AddEmployee: React.FC = () => {
+const AddRandomEmployees: React.FC = () => {
     const dispatch = useDispatch();
-    async function submitFn(empl: Employee): Promise<InputResult> {
+    async function submitFn(emplNumber: number): Promise<InputResult> {
         const res: InputResult = {status: 'success', message: ''};
         try {
-            const employee: Employee = await employeesService.addEmployee(empl);
-            res.message = `employee with id: ${employee.id} has been added`
+         await employeesService.addRandomEmployees(emplNumber);
+            res.message = `${emplNumber} random employees  have been added`
         } catch (error: any) {
            res.status = 'error' ;
            if((typeof(error) == 'string') && error.includes('Authentication')) {
@@ -23,6 +23,6 @@ const AddEmployee: React.FC = () => {
         }
         return res;
     }
-    return <EmployeeForm submitFn={submitFn}/>
+    return <RandomEmployeesForm submitFn={submitFn}/>
 }
-export default AddEmployee;
+export default AddRandomEmployees;

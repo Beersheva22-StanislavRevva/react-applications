@@ -19,26 +19,17 @@ export function getRandomEmployee(minSalary, maxSalary, minYear, maxYear, depart
    const gender = getRandomElement(['male', 'female']);
    const name = getRandomElement(gender == 'female' ? names.femaleNames :
     names.maleNames);
-    const birthYear = getRandomInt(minYear, maxYear + 1);
-    const salary = getRandomInt(minSalary, maxSalary) * 1000;
+    const birthDate = new Date(String(getRandomInt(minYear, maxYear + 1))+"-"
+    +String(getRandomInt(1, 13))+"-"+String(getRandomInt(1, 32)));
+    const salary = Math.round(getRandomInt(minSalary, maxSalary) / 1000) * 1000;
     const department = getRandomElement(departments);
     return {
-         name, birthYear, gender,
-        salary, department};
+        birthDate, name, department,
+        salary, gender};
 }
 export function getRandomMatrix(rows, columns, min, max) {
-    return Array.from({length:rows}).map(() => getRandomArrayIntNumbers(columns, min, max));
+    return Array.from({length:rows}).map(() => getRandomArrayIntNumbers(columns, min, max))
 }
 export function getRandomArrayIntNumbers(nNumbers, min, max) {
-    return Array.from({length:nNumbers}).map(() => getRandomInt(min, max));
-}
-export function getStableMatrix (rows, columns) {
-   let res = Array.from({length:rows}).map(() => getStableArrayIntNumbers(columns));
-   const horCent = Math.trunc(rows/2);
-   const verCent = Math.trunc(columns/2);
-   res[horCent-1][verCent] = res[horCent][verCent] = res[horCent+1][verCent] = 1
-   return res;    
-}
-export function getStableArrayIntNumbers (nNumbers) {
-    return Array.from({length:nNumbers}).map(() => 0);
+    return Array.from({length: nNumbers}).map(() => getRandomInt(min, max))
 }
