@@ -1,6 +1,6 @@
 import { Alert, Box, Snackbar, Typography } from "@mui/material"
 import exp from "constants"
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Employee from "../../model/Employee";
 import { authService, employeesService } from "../../config/service-config";
 import { Subscription } from 'rxjs'
@@ -11,6 +11,9 @@ import { StatusType } from "../../model/StatusType";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelectorAuth } from "../../redux/store";
 import UserData from "../../model/UserData";
+import Confirm from "../common/Confirm";
+
+const Employees: React.FC = () => {
 function getColumns (userData:UserData) {
 const columns: GridColDef[] = [
     {field: 'id', headerName: 'ID', flex: 0.5, headerClassName: 'data-grid-header',
@@ -34,11 +37,11 @@ const columns: GridColDef[] = [
      return columns; 
 }
 function deleteEmployee(id: GridRowId): void  {
-   employeesService.deleteEmployee(id);
-   console.log(id);
-}
+   setOpen(true);
+   emplId.current = +id;
+   }
 
-const Employees: React.FC = () => {
+
     const dispatch = useDispatch();
     const userData = useSelectorAuth();
     const [alertMessage, setAlertMessage] = useState('');
@@ -63,10 +66,22 @@ const Employees: React.FC = () => {
             });
         return () => subscription.unsubscribe();
     }, []);
-return <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+    const [open,setOpen] = useState(false);
+    const emplId = useRef(0);
+    function handleClose(agree:boolean) {
+        setOpen(false);
+        agree && employeesService.deleteEmployee(emplId.current)
+    }
+
+ return <Box sx={{ display: 'flex', justifyContent: 'center' }}>
     <Box sx={{ height: '50vh', width: '80vw' }}>
         <DataGrid columns={getColumns(userData)} rows={employees} />
     </Box>
+    <Confirm 
+        dialogTitle="Delete employee?"
+        dialogContent={`Warning! You will delete employee id ${emplId.current} `}
+        handleClose={handleClose}
+        open={open} />
     <Snackbar open={!!alertMessage} autoHideDuration={20000}
                      onClose={() => setAlertMessage('')}>
                         <Alert  onClose = {() => setAlertMessage('')} severity={severity.current} sx={{ width: '100%' }}>

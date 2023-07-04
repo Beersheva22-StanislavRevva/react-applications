@@ -8,6 +8,10 @@ import { getRandomEmployee } from "../Util/random";
 export default class EmployeesServiceRest implements EmployeesService {
     
     constructor(private url: string) { }
+    updateEmployee(empl: Employee): Promise<Employee[]> {
+    //TODO
+        throw new Error("Method not implemented.");
+    }
     async deleteEmployee(id: any): Promise<void> {
         let responseText = '';
         try {
