@@ -1,28 +1,30 @@
-import Employee from "../../model/Employee";
 import InputResult from "../../model/InputResult";
-import { authService, employeesService } from "../../config/service-config";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../redux/slices/authSlice";
-import { RandomEmployeesForm } from "../forms/RandomEmployeesForm";
+import { Box } from "@mui/material";
+import Input from "../common/Input";
+import { getRandomEmployee } from "../../Util/random";
+import employeeConfig from "../../config/employee-config.json"
+import {employeesService } from "../../config/service-config"
 
 const AddRandomEmployees: React.FC = () => {
-    const dispatch = useDispatch();
-    async function submitFn(emplNumber: number): Promise<InputResult> {
-        const res: InputResult = {status: 'success', message: ''};
-        try {
-         await employeesService.addRandomEmployees(emplNumber);
-            res.message = `${emplNumber} random employees  have been added`
-        } catch (error: any) {
-           res.status = 'error' ;
-           if((typeof(error) == 'string') && error.includes('Authentication')) {
-            authService.logout();
-            dispatch(authActions.reset());
-            res.message = ""
-           }
-           res.message = error;
+    const{minSalary, maxSalary, minYear, maxYear, departments,minRandomQuantity, maxRandomQuantity} = employeeConfig;
+    function submitFn (inputText:string): InputResult {
+        let res: InputResult = {status:"success", message: `${inputText} employees were added` }
+        const emplNumber = parseInt(inputText);
+        if (emplNumber >= minRandomQuantity && emplNumber <= maxRandomQuantity) {
+           [...new Array(emplNumber)].map((_,i) => 
+            employeesService.addEmployee(getRandomEmployee
+                (minSalary, maxSalary, minYear, maxYear, departments)));
+        
+        } else {
+            res = {status: 'error', message: 'the number sholud be from 1 to 50'}
         }
         return res;
     }
-    return <RandomEmployeesForm submitFn={submitFn}/>
+
+
+   return <Box>
+    <Input submitFn={submitFn} placeholder="number of employees" buttonTitle="Add" type="number" />
+   </Box>
 }
-export default AddRandomEmployees;
+
+export default AddRandomEmployees

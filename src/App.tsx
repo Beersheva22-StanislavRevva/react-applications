@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavigatorDispatcher from "./components/navigators/NavigatorDispatcher";
+
 import SignIn from "./components/pages/SignIn";
 import SignOut from "./components/pages/SignOut";
 import './App.css'
-import { useSelectorAuth, useSelectorCode } from "./redux/store";
+import { useSelectorAuth } from "./redux/store";
 import { useMemo } from "react";
 import routesConfig from './config/routes-config.json';
 import NotFound from "./components/pages/NotFound";
@@ -17,7 +18,7 @@ import AddRandomEmployees from "./components/pages/AddRandomEmployees";
 const {always, authenticated, admin, noadmin, noauthenticated} = routesConfig;
 type RouteTypeOrder = RouteType & {order?: number}
 function getRoutes(userData: UserData): RouteType[] {
-  const res: RouteType[] = [];
+  const res: RouteTypeOrder[] = [];
   res.push(...always);
   if(userData) {
       res.push(...authenticated);
@@ -43,8 +44,6 @@ function getRoutes(userData: UserData): RouteType[] {
 }
 const App: React.FC = () => {
   const userData = useSelectorAuth();
-  const code = useSelectorCode();
-  const [alertMessage,severity] = useMemo(() => codeProcessing(), [code]);
   const routes = useMemo(() => getRoutes(userData), [userData])
   return <BrowserRouter>
   <Routes>
@@ -53,7 +52,9 @@ const App: React.FC = () => {
         <Route path="employees/add" element={<AddEmployee/>}/>
         <Route path="employees/random" element={<AddRandomEmployees/>}/>
         <Route path="statistics/age" element={<AgeStatistics/>}/>
-        <Route path="statistics/salary" element={<SalaryStatistics/>}/>
+        <Route path="statistics/salary" 
+        element={<SalaryStatistics/>}/>
+        
         <Route path="signin" element={<SignIn/>}/>
         <Route path="signout" element={<SignOut/>}/>
         <Route path="/*" element={<NotFound/>}/>
@@ -62,7 +63,3 @@ const App: React.FC = () => {
   </BrowserRouter>
 }
 export default App;
-
-function codeProcessing(): any {
-  throw new Error("Function not implemented.");
-}
