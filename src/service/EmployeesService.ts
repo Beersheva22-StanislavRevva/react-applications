@@ -6,6 +6,6 @@ export default interface EmployeesService {
     addEmployee(empl: Employee): Promise<Employee>
     getEmployees():Observable<Employee[] | string>;
     deleteEmployee(id:any):Promise<void>;
-    updateEmployee(empl: Employee): Promise<Employee[]>
+    updateEmployee(empl: Employee, id:any): Promise<Employee[]>
 
 }

@@ -21,7 +21,9 @@ const Confirm: React.FC<Props> = ({dialogTitle: dialogTitle, dialogContent, hand
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {dialogContent}
+            {dialogContent
+            
+            }
             </DialogContentText>
         </DialogContent>
         <DialogActions>

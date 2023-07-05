@@ -20,6 +20,7 @@ const AddEmployee: React.FC = () => {
             res.message = ""
            }
            res.message = error;
+           res.message = error;
         }
         return res;
     }

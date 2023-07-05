@@ -8,11 +8,29 @@ import { getRandomEmployee } from "../Util/random";
 export default class EmployeesServiceRest implements EmployeesService {
     
     constructor(private url: string) { }
-    updateEmployee(empl: Employee): Promise<Employee[]> {
-    //TODO
-        throw new Error("Method not implemented.");
+    async updateEmployee(empl: Employee, id: number ): Promise<Employee[]> {
+    let responseText = '';
+    try {
+        const response = await fetch(this.url+`/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type':'application/json',
+                Authorization: `Bearer ${localStorage.getItem(AUTH_DATA_JWT) || ''}`
+            },
+            body: JSON.stringify({...empl, userId: 'admin'})
+        });
+        if (!response.ok) {
+           const {status, statusText} = response;
+           responseText = status == 401 || status == 403 ? 'Authentication' : statusText;
+           throw responseText;
+        }
+        return await response.json();
+      } catch (error: any) {
+
+         throw responseText ? responseText : "Server is unavailable. Repeat later on";
+      }
     }
-    async deleteEmployee(id: any): Promise<void> {
+    async deleteEmployee(id: number): Promise<void> {
         let responseText = '';
         try {
           const response = await fetch(this.url+`/${id}`, {
