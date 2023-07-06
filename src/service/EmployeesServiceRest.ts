@@ -4,6 +4,8 @@ import { AUTH_DATA_JWT } from "./AuthServiceJwt";
 import EmployeesService from "./EmployeesService";
 import { StringDecoder } from "string_decoder";
 import { getRandomEmployee } from "../Util/random";
+import { StatusType } from "../model/StatusType";
+import { count } from "../Util/number-functions";
 
 export default class EmployeesServiceRest implements EmployeesService {
     
@@ -100,4 +102,27 @@ export default class EmployeesServiceRest implements EmployeesService {
     }
     return [];
     }
+}
+export function getStatistics(employees: Employee[], field: string, interval: number) {
+    // const res: StatsType[] = []
+    
+    let array = employees;
+    const currentYear = new Date().getFullYear();
+
+    // if (field === 'birthDate') {
+    //     array = employees.map(e => currentYear - e[field].getFullYear())
+    // }
+    // if (field === 'salary') {
+    //     array = employees.map(e => e[field])
+    // }
+    
+    const statisticsObj = count(employees,field, interval);
+    
+    const res = Object.entries(statisticsObj).map((e, index) => {
+        const min = +e[0] * interval;
+        const max = min + interval - 1;
+        return { id: index + 1, min, max, count: e[1] };
+    })
+
+    return res
 }
