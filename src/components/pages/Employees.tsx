@@ -1,21 +1,16 @@
-import { Box, Snackbar, Alert, Modal } from "@mui/material"
+import { Box,  Modal } from "@mui/material"
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useDispatch } from 'react-redux';
 import Employee from "../../model/Employee";
-import { authService, employeesService } from "../../config/service-config";
+import { employeesService } from "../../config/service-config";
 import { Subscription } from 'rxjs';
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import { authActions } from "../../redux/slices/authSlice";
-import { StatusType } from "../../model/StatusType";
-import CodeType from "../../model/CodeType";
-import { codeActions } from "../../redux/slices/codeSlice";
-import UserData from "../../model/UserData";
-import { Delete, Edit } from "@mui/icons-material";
+
+import { Delete, Edit, Man, Woman } from "@mui/icons-material";
 import { useSelectorAuth } from "../../redux/store";
 import { Confirmation } from "../common/Confirmation";
-import { CSSProperties } from "@mui/material/styles/createMixins";
 import { EmployeeForm } from "../forms/EmployeeForm";
 import InputResult from "../../model/InputResult";
+import { useDispatchCode, useSelectorEmployees } from "../../hooks/hooks";
 const columnsCommon: GridColDef[] = [
     {
         field: 'id', headerName: 'ID', flex: 0.5, headerClassName: 'data-grid-header',
@@ -39,7 +34,9 @@ const columnsCommon: GridColDef[] = [
     },
     {
         field: 'gender', headerName: 'Gender', flex: 0.6, headerClassName: 'data-grid-header',
-        align: 'center', headerAlign: 'center'
+        align: 'center', headerAlign: 'center', renderCell: params => {
+            return params.value == "male" ? <Man/> : <Woman/>
+        }
     },
    ];
    
@@ -78,9 +75,9 @@ const Employees: React.FC = () => {
             }
         }
        ]
-    const dispatch = useDispatch();
+    const dispatch = useDispatchCode();
     const userData = useSelectorAuth();
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    const employees = useSelectorEmployees();
     const columns = useMemo(() => getColumns(), [userData, employees]);
 
     const [openConfirm, setOpenConfirm] = useState(false);
@@ -90,33 +87,6 @@ const Employees: React.FC = () => {
     const employeeId = useRef('');
     const confirmFn = useRef<any>(null);
     const employee = useRef<Employee | undefined>();
-    useEffect(() => {
-
-        const subscription: Subscription = employeesService.getEmployees()
-            .subscribe({
-                next(emplArray: Employee[] | string) {
-                    let code: CodeType = CodeType.OK;
-                    let message: string = '';
-                    if (typeof emplArray === 'string') {
-                        if (emplArray.includes('Authentication')) {
-                            code = CodeType.AUTH_ERROR;
-                            message = "Authentication error, mooving to Sign In";
-                        } else {
-                            code = emplArray.includes('unavailable') ? CodeType.SERVER_ERROR :
-                                CodeType.UNKNOWN;
-                            message = emplArray;
-                        }
-
-
-                    } else {
-                        setEmployees(emplArray.map(e => ({ ...e, birthDate: new Date(e.birthDate) })));
-                    }
-                    dispatch(codeActions.set({ code, message }))
-
-                }
-            });
-        return () => subscription.unsubscribe();
-    }, []);
     function getColumns(): GridColDef[] {
         let res: GridColDef[] = columnsCommon;
         if (userData && userData.role == 'admin') {
@@ -133,25 +103,15 @@ const Employees: React.FC = () => {
         setOpenConfirm(true);
     }
     async function actualRemove(isOk: boolean) {
-        let code: CodeType = CodeType.OK;
-        let message: string = '';
-
+        let errorMessage: string = '';
         if (isOk) {
             try {
                 await employeesService.deleteEmployee(employeeId.current);
             } catch (error: any) {
-                if (error.includes('Authentication')) {
-
-                    code = CodeType.AUTH_ERROR;
-                    message = "Authentication error, mooving to Sign In";
-                } else {
-                    code = error.includes('unavailable') ? CodeType.SERVER_ERROR :
-                        CodeType.UNKNOWN;
-                    message = error;
-                }
+                errorMessage = error;
             }
         }
-        dispatch(codeActions.set({ code, message }))
+        dispatch(errorMessage, '');
         setOpenConfirm(false);
     }
     function updateEmployee(empl: Employee): Promise<InputResult> {
@@ -167,25 +127,17 @@ const Employees: React.FC = () => {
         return Promise.resolve(res);
     }
     async function actualUpdate(isOk: boolean) {
-        let code: CodeType = CodeType.OK;
-        let message: string = '';
+       
+        let errorMessage: string = '';
 
         if (isOk) {
             try {
                 await employeesService.updateEmployee(employee.current!);
             } catch (error: any) {
-                if (error.includes('Authentication')) {
-
-                    code = CodeType.AUTH_ERROR;
-                    message = "Authentication error, mooving to Sign In";
-                } else {
-                    code = error.includes('unavailable') ? CodeType.SERVER_ERROR :
-                        CodeType.UNKNOWN;
-                    message = error;
-                }
+                errorMessage = error
             }
         }
-        dispatch(codeActions.set({ code, message }))
+        dispatch(errorMessage, '');
         setOpenConfirm(false);
 
     }
@@ -194,7 +146,7 @@ const Employees: React.FC = () => {
         display: 'flex', justifyContent: 'center',
         alignContent: 'center'
     }}>
-        <Box sx={{ height: '80vh', width: '80vw' }}>
+        <Box sx={{ height: '80vh', width: '95vw' }}>
             <DataGrid columns={columns} rows={employees} />
         </Box>
         <Confirmation confirmFn={confirmFn.current} open={openConfirm}
