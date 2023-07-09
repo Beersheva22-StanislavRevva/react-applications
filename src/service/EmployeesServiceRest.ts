@@ -111,7 +111,8 @@ export default class EmployeesServiceRest implements EmployeesService {
     }
     getEmployees(): Observable<Employee[] | string> {
        if (this.observable === null) {
-        this.observable = new Observable ((subscriber) =>{ 
+        this.observable = new Observable ((subscriber) =>{
+            this.cache.reset();
             if(this.cache.isEmpty()) {
                 this.sendEmployeesToSubscriber(subscriber);
             } else {
@@ -165,12 +166,7 @@ export default class EmployeesServiceRest implements EmployeesService {
                 headers,
                 body
             });
-            console.log({
-                method,
-                headers,
-               body
-            });
-               if (!response.ok) {
+                if (!response.ok) {
                  return Promise.resolve(response.status == 401 || response.status == 403 ?
                      'Authentication' : response.statusText); 
              }
