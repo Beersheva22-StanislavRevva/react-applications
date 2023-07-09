@@ -14,7 +14,14 @@ import Employees from "./components/pages/Employees";
 import AddEmployee from "./components/pages/AddEmployee";
 import AgeStatistics from "./components/pages/AgeStatistics";
 import SalaryStatistics from "./components/pages/SalaryStatistics";
-import AddRandomEmployees from "./components/pages/AddRandomEmployees";
+import { StatusType } from "./model/StatusType";
+import CodeType from "./model/CodeType";
+import { useDispatch } from "react-redux";
+import { authActions } from "./redux/slices/authSlice";
+import { authService } from "./config/service-config";
+import { Alert, Snackbar } from "@mui/material";
+import { codeActions } from "./redux/slices/codeSlice";
+import Generation from "./components/pages/Generation";
 const {always, authenticated, admin, noadmin, noauthenticated} = routesConfig;
 type RouteTypeOrder = RouteType & {order?: number}
 function getRoutes(userData: UserData): RouteType[] {
@@ -44,27 +51,44 @@ function getRoutes(userData: UserData): RouteType[] {
 }
 const App: React.FC = () => {
   const userData = useSelectorAuth();
-  //const code = useSelectorCode();
-  //const [alertMessage,severity] = useMemo(() => codeProcessing(), [code]);
-  const routes = useMemo(() => getRoutes(userData), [userData])
-  function codeProcessing() {
+  const code = useSelectorCode();
+  const dispatch = useDispatch();
 
+  const [alertMessage, severity] = useMemo(() => codeProcessing(), [code]);
+  const routes = useMemo(() => getRoutes(userData), [userData]);
+  function codeProcessing(): [string, StatusType] {
+    const res: [string, StatusType] = [code.message, 'success'];
+    switch (code.code) {
+      case CodeType.OK: res[1] = 'success'; break;
+      case CodeType.SERVER_ERROR: res[1] = 'error'; break;
+      case CodeType.UNKNOWN: res[1] = 'error'; break;
+      case CodeType.AUTH_ERROR: res[1] = 'error';
+       dispatch(authActions.reset()); 
+      authService.logout()
+    }
+    return res;
   }
   return <BrowserRouter>
   <Routes>
     <Route path="/" element={<NavigatorDispatcher routes={routes}/>}>
         <Route index element={<Employees/>}/>
         <Route path="employees/add" element={<AddEmployee/>}/>
-        <Route path="employees/random" element={<AddRandomEmployees/>}/>
         <Route path="statistics/age" element={<AgeStatistics/>}/>
         <Route path="statistics/salary" 
         element={<SalaryStatistics/>}/>
         
         <Route path="signin" element={<SignIn/>}/>
         <Route path="signout" element={<SignOut/>}/>
+        <Route path="generation" element={<Generation/>}/>
         <Route path="/*" element={<NotFound/>}/>
     </Route>
   </Routes>
+  <Snackbar open={!!alertMessage} autoHideDuration={20000}
+                     onClose={() => dispatch(codeActions.reset())}>
+                        <Alert  onClose = {() => dispatch(codeActions.reset())} severity={severity} sx={{ width: '100%' }}>
+                            {alertMessage}
+                        </Alert>
+                    </Snackbar>
   </BrowserRouter>
 }
 export default App;

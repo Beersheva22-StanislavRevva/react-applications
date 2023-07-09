@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import InputResult from "../../model/InputResult";
 
 import { StatusType } from "../../model/StatusType";
-import "./Input.css"
+
 import { Alert, Button, TextField } from "@mui/material";
 type Props = {
     submitFn: (inputText: string) => InputResult;
@@ -30,7 +30,7 @@ const Input: React.FC<Props> = ({submitFn, placeholder, buttonTitle, type}) => {
         setDisabled(!event.target.value)
     }
     return <div>
-        <TextField  size="small" type={type || 'text'} placeholder={placeholder} ref={inputElementRef} 
+        <TextField  size="small" fullWidth type={type || 'text'} placeholder={placeholder} ref={inputElementRef} 
         onChange={onChangeFn}/>
         <Button onClick={onClickFn} disabled={disabled}>{buttonTitle || 'GO' }</Button>
         {message && <Alert severity={status.current} >{message}</Alert>}
