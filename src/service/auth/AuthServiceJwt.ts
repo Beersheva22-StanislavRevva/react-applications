@@ -12,6 +12,9 @@ function getUserData(data: any): UserData {
 }
 export default class AuthServiceJwt implements AuthService {
     constructor(private url: string){}
+    getAvailableProvider(): { providerName: string; providerIconUrl: string; }[] {
+        return [];
+    }
     async login(loginData: LoginData): Promise<UserData > {
        const response = await fetch(this.url, {
         method: 'POST',

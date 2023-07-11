@@ -1,16 +1,17 @@
-import { Box,  Modal } from "@mui/material"
+import { Box,  Modal, useMediaQuery, useTheme } from "@mui/material"
 import { useState, useEffect, useRef, useMemo } from "react";
 import Employee from "../../model/Employee";
 import { employeesService } from "../../config/service-config";
 import { Subscription } from 'rxjs';
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 
-import { Delete, Edit, Man, Woman } from "@mui/icons-material";
+import { Delete, Details, Edit, Man, Visibility, Woman } from "@mui/icons-material";
 import { useSelectorAuth } from "../../redux/store";
 import { Confirmation } from "../common/Confirmation";
 import { EmployeeForm } from "../forms/EmployeeForm";
 import InputResult from "../../model/InputResult";
 import { useDispatchCode, useSelectorEmployees } from "../../hooks/hooks";
+import EmployeeCard from "../cards/EmployeeCard";
 const columnsCommon: GridColDef[] = [
     {
         field: 'id', headerName: 'ID', flex: 0.5, headerClassName: 'data-grid-header',
@@ -39,6 +40,7 @@ const columnsCommon: GridColDef[] = [
         }
     },
    ];
+   
    
 const style = {
     position: 'absolute' as 'absolute',
@@ -75,19 +77,50 @@ const Employees: React.FC = () => {
             }
         }
        ]
+       const columnsPortrait: GridColDef[] = [
+        columnsCommon[0],
+        columnsCommon[1],
+        {
+            field: 'actions', type: "actions", getActions: (params) => {
+                return [
+                   
+                    <GridActionsCellItem label="details" icon={<Visibility />}
+                        onClick={() => {
+                            employeeId.current = params.id as any;
+                            if (params.row) {
+                                const empl = params.row;
+                                empl && (employee.current = empl);
+                                setFlDetails(true)
+                            }
+    
+                        }
+                        } />
+                ] ;
+            }
+        }
+       ]
     const dispatch = useDispatchCode();
     const userData = useSelectorAuth();
     const employees = useSelectorEmployees();
-    const columns = useMemo(() => getColumns(), [userData, employees]);
+    const theme = useTheme();
+    const isPortrait = useMediaQuery(theme.breakpoints.down('sm'));
+    const columns = useMemo(() => getColumns(), [userData, employees, isPortrait]);
 
     const [openConfirm, setOpenConfirm] = useState(false);
     const [openEdit, setFlEdit] = useState(false);
+    const [openDetails, setFlDetails] = useState(false);
     const title = useRef('');
     const content = useRef('');
     const employeeId = useRef('');
     const confirmFn = useRef<any>(null);
     const employee = useRef<Employee | undefined>();
+    
+    
     function getColumns(): GridColDef[] {
+        
+        return isPortrait ? columnsPortrait : getColumnsFromLandscape();
+    }
+    function getColumnsFromLandscape(): GridColDef[]{
         let res: GridColDef[] = columnsCommon;
         if (userData && userData.role == 'admin') {
             res = res.concat(columnsAdmin);
@@ -141,6 +174,14 @@ const Employees: React.FC = () => {
         setOpenConfirm(false);
 
     }
+    function cardAction(isDelete: boolean){
+        if (isDelete) {
+            removeEmployee(employeeId.current);
+        } else {
+            setFlEdit(true)
+        }
+        setFlDetails(false)
+    }
 
     return <Box sx={{
         display: 'flex', justifyContent: 'center',
@@ -159,6 +200,16 @@ const Employees: React.FC = () => {
         >
             <Box sx={style}>
                 <EmployeeForm submitFn={updateEmployee} employeeUpdated={employee.current} />
+            </Box>
+        </Modal>
+        <Modal
+            open={openDetails}
+            onClose={() => setFlDetails(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <EmployeeCard actionFn={cardAction} employee={employee.current!} />
             </Box>
         </Modal>
 

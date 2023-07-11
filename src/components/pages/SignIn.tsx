@@ -1,4 +1,5 @@
 import { useDispatch } from "react-redux";
+import Input from "../common/Input";
 import InputResult from "../../model/InputResult";
 import { authActions } from "../../redux/slices/authSlice";
 import LoginData from "../../model/LoginData";
@@ -22,7 +23,9 @@ const SignIn: React.FC = () => {
         }
         return inputResult;
     }
-    return <SignInForm submitFn={submitFn}/>
+    return <SignInForm submitFn={submitFn}
+     networks={authService.getAvailableProvider()}
+         />
 
 }
 

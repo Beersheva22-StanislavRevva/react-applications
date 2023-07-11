@@ -14,9 +14,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import LoginData from '../../model/LoginData';
 import InputResult from '../../model/InputResult';
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Divider, Snackbar } from '@mui/material';
 import { StatusType } from '../../model/StatusType';
-import GoogleButton from 'react-google-button';
+import { NetworkType } from '../../service/auth/AuthService';
 
 function Copyright(props: any) {
     return (
@@ -35,8 +35,9 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 type Props = {
     submitFn: (loginData: LoginData) => Promise<InputResult>
+    networks?: NetworkType[]
 }
-const SignInForm: React.FC<Props> = ({ submitFn }) => {
+const SignInForm: React.FC<Props> = ({ submitFn, networks }) => {
     const message = React.useRef<string>('');
     const [open, setOpen] = React.useState(false);
     const severity = React.useRef<StatusType>('success');
@@ -51,24 +52,14 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
         message.current && setOpen(true);
     };
 
-    const handleGoogleSubmit = async (event: any) => {
-        event.preventDefault();
-        const email: string = "GOOGLE";
-        const password: string = "";
-        const result = await submitFn({ email, password });
-        message.current = result.message!;
-        severity.current = result.status;
-        message.current && setOpen(true);
-    };
-
     return (
         <ThemeProvider theme={defaultTheme}>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: {xs: 8, sm:-4, md: 8},
-                       
+                        marginTop: { xs: 8, sm: -4, md: 8 },
+
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -92,7 +83,7 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
                                     name="email"
                                     autoComplete="email"
                                     autoFocus
-                                    
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={12}>
@@ -108,23 +99,33 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
 
                                 />
                             </Grid>
-                            <Grid item xs={12} >
+                            <Grid item xs={12} sm={6} md={12}>
                                 <Button
                                     type="submit"
                                     fullWidth
                                     variant="contained"
-                                   
+
                                 >
                                     Sign In
                                 </Button>
                             </Grid>
-                            <Grid item xs={12}>
-                                <GoogleButton
-                                   onClick = {handleGoogleSubmit}
-                                 >
-                                </GoogleButton>
-                            </Grid>
+                            {networks && networks.length > 0 && <Grid item xs={6}  sm={6} md={6}>
+                                <Divider sx={{ width: "100%", fontWeight: "bold" }}>or</Divider>
+                            {networks.map(n =>  <Button key={n.providerName}
+                                onClick={() =>
+                                    submitFn({ email: n.providerName, password: '' })} fullWidth variant="outlined"
+                                sx={{ mt: 2 }}
+                            >
+
+                                <Avatar src={n.providerIconUrl} sx={{ width: { xs: '6vh', sm: '6vw', lg: '3vw' } }} />
+                            </Button>)}
+                            </Grid>}
                         </Grid>
+
+
+
+
+
                     </Box>
                     <Snackbar open={open} autoHideDuration={10000}
                         onClose={() => setOpen(false)}>
