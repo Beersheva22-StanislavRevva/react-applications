@@ -4,6 +4,7 @@ import Employee from "../../model/Employee";
 import employeeConfig from "../../config/employee-config.json"
 import InputResult from "../../model/InputResult";
 import { StatusType } from "../../model/StatusType";
+import { useSelectorAuth } from "../../redux/store";
 type Props = {
     submitFn: (empl: Employee) => Promise<InputResult>,
     employeeUpdated?: Employee
@@ -15,13 +16,15 @@ const initialEmployee: Employee = {
     id: 0, birthDate: initialDate, name: '',department: '', salary: 0,
      gender: initialGender
 };
+
 export const EmployeePortraitView: React.FC<Props> = ({ submitFn, employeeUpdated }) => {
     const { minYear, minSalary, maxYear, maxSalary, departments }
         = employeeConfig;
     const [employee, setEmployee] =
         useState<Employee>(employeeUpdated || initialEmployee);
         const [errorMessage, setErrorMessage] = useState('');
-    function handlerName(event: any) {
+    const userData = useSelectorAuth();
+        function handlerName(event: any) {
         const name = event.target.value;
         const emplCopy = { ...employee };
         emplCopy.name = name;
@@ -68,6 +71,16 @@ export const EmployeePortraitView: React.FC<Props> = ({ submitFn, employeeUpdate
     }
     function onResetFn(event: any) {
         setEmployee(employeeUpdated || initialEmployee);
+    }
+    function getEditButtons() {
+        let res;
+        if (userData && userData.role == 'admin') {
+            res = <Box sx={{ marginTop: { xs: "10vh", sm: "5vh" }, textAlign: "center" }}>
+            <Button >Delete</Button>
+            <Button >Update</Button>
+        </Box>
+        }
+        return res;
     }
 
     return <Box sx={{ marginTop: { sm: "25vh" } }}>
@@ -131,9 +144,7 @@ export const EmployeePortraitView: React.FC<Props> = ({ submitFn, employeeUpdate
                     </FormControl>
                 </Grid>
             </Grid>
-
-
-
+            {getEditButtons()}
 
             {/* <Box sx={{ marginTop: { xs: "10vh", sm: "5vh" }, textAlign: "center" }}>
                 <Button type="submit" >Submit</Button>
