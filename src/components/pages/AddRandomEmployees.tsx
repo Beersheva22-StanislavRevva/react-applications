@@ -1,7 +1,7 @@
 import InputResult from "../../model/InputResult";
 import { Box } from "@mui/material";
 import Input from "../common/Input";
-import { getRandomEmployee } from "../../Util/random";
+import { getRandomEmployee } from "../../util/random";
 import employeeConfig from "../../config/employee-config.json"
 import {employeesService } from "../../config/service-config"
 

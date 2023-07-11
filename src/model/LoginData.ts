@@ -1,5 +1,6 @@
 type LoginData = {
     email: string;
-    password: string
+    password: string;
+    gogleFl?:boolean
 }
 export default LoginData

@@ -5,7 +5,7 @@ import { employeesService } from "../../config/service-config";
 import Employee from "../../model/Employee";
 import CodePayload from "../../model/CodePayload";
 import CodeType from "../../model/CodeType";
-import { getRandomEmployee } from "../../Util/random"
+import { getRandomEmployee } from "../../util/random"
 import employeeConfig from '../../config/employee-config.json'
 import { codeActions } from "../../redux/slices/codeSlice";
 const {minSalary, maxSalary, departments, minYear, maxYear} = employeeConfig;

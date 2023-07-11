@@ -10,6 +10,7 @@ const SignIn: React.FC = () => {
     async function submitFn(loginData: LoginData): Promise<InputResult> {
         let inputResult: InputResult = {status: 'error',
          message: "Server unavailable, repeat later on"}
+         
         try {
             const res: UserData = await authService.login(loginData);
             res && dispatch(authActions.set(res));

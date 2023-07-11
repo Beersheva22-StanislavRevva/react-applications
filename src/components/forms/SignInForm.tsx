@@ -16,6 +16,7 @@ import LoginData from '../../model/LoginData';
 import InputResult from '../../model/InputResult';
 import { Alert, Snackbar } from '@mui/material';
 import { StatusType } from '../../model/StatusType';
+import GoogleButton from 'react-google-button';
 
 function Copyright(props: any) {
     return (
@@ -44,6 +45,16 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
         const data = new FormData(event.currentTarget);
         const email: string = data.get('email')! as string;
         const password: string = data.get('password')! as string;
+        const result = await submitFn({ email, password });
+        message.current = result.message!;
+        severity.current = result.status;
+        message.current && setOpen(true);
+    };
+
+    const handleGoogleSubmit = async (event: any) => {
+        event.preventDefault();
+        const email: string = "GOOGLE";
+        const password: string = "";
         const result = await submitFn({ email, password });
         message.current = result.message!;
         severity.current = result.status;
@@ -107,12 +118,13 @@ const SignInForm: React.FC<Props> = ({ submitFn }) => {
                                     Sign In
                                 </Button>
                             </Grid>
+                            <Grid item xs={12}>
+                                <GoogleButton
+                                   onClick = {handleGoogleSubmit}
+                                 >
+                                </GoogleButton>
+                            </Grid>
                         </Grid>
-
-
-
-
-
                     </Box>
                     <Snackbar open={open} autoHideDuration={10000}
                         onClose={() => setOpen(false)}>
