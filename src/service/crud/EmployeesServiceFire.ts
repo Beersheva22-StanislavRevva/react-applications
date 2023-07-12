@@ -1,7 +1,7 @@
 import { Observable, catchError, of } from 'rxjs';
-import Employee from '../model/Employee';
+import Employee from '../../model/Employee';
 import EmployeesService from './EmployeesService';
-import appFirebase from '../config/firebase-config';
+import appFirebase from '../../config/firebase-config';
 import {
     CollectionReference,
     DocumentReference,
@@ -14,8 +14,8 @@ import {
     doc,
 } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { getRandomInt } from '../util/random';
-import { getISODateStr } from '../util/date-functions';
+import { getRandomInt } from '../../util/random';
+import { getISODateStr } from '../../util/date-functions';
 const MIN_ID = 100000;
 const MAX_ID = 1000000;
 
