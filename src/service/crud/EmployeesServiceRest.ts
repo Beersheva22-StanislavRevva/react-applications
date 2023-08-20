@@ -25,14 +25,14 @@ function getResponseText(response: Response): string {
     let res = '';
     if (!response.ok) {
         const { status, statusText } = response;
-        res = status == 401 || status == 403 ? 'Authentication' : statusText;
+        res = status == 401 || status == 403 ? 'Authentication' : statusText; // перенести сообщение об ощибке в статус текст
     }
     return res;
 
 }
 function getHeaders(): HeadersInit {
     const res: HeadersInit = {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem(AUTH_DATA_JWT) || ''}`
     }
     return res;
@@ -115,7 +115,7 @@ export default class EmployeesServiceRest implements EmployeesService {
     }
        
     async addEmployee(empl: Employee): Promise<Employee> {
-       
+       empl.id = 0;
             const response = await fetchRequest(this.url, {
                 method: 'POST',
                }, {...empl, userId: "admin"} as any)

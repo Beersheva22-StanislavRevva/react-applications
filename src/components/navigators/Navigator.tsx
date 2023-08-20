@@ -26,7 +26,7 @@ const Navigator: React.FC<{ routes: RouteType[] }> = ({routes}) => {
 
     
     return <Box mt={10}>
-        <AppBar sx={{backgroundColor:"lightgray"}}>
+        <AppBar sx={{backgroundColor:"gray"}}>
             <Tabs value={value <routes.length ? value : 0} onChange={onChangeFn}>
                 {getTabs()}       
             </Tabs>

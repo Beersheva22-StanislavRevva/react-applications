@@ -46,7 +46,7 @@ const SignInForm: React.FC<Props> = ({ submitFn, networks }) => {
         const data = new FormData(event.currentTarget);
         const email: string = data.get('email')! as string;
         const password: string = data.get('password')! as string;
-        const result = await submitFn({ email, password });
+        const result = await submitFn({ username: email, password });
         message.current = result.message!;
         severity.current = result.status;
         message.current && setOpen(true);
@@ -113,7 +113,7 @@ const SignInForm: React.FC<Props> = ({ submitFn, networks }) => {
                                 <Divider sx={{ width: "100%", fontWeight: "bold" }}>or</Divider>
                             {networks.map(n =>  <Button key={n.providerName}
                                 onClick={() =>
-                                    submitFn({ email: n.providerName, password: '' })} fullWidth variant="outlined"
+                                    submitFn({ username: n.providerName, password: '' })} fullWidth variant="outlined"
                                 sx={{ mt: 2 }}
                             >
 

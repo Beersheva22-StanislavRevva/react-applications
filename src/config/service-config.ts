@@ -7,7 +7,11 @@ import EmployeesServiceFire from "../service/crud/EmployeesServiceFire";
 import EmployeesServiceRest from "../service/crud/EmployeesServiceRest";
 import AuthServiceFire from "../service/auth/AuthServiceFire";
 
-export const authService: AuthService =
- new AuthServiceFire();
- export const employeesService: EmployeesService = 
-    new EmployeesServiceFire();
+// export const authService: AuthService =
+//  new AuthServiceFire();
+//  export const employeesService: EmployeesService = 
+//     new EmployeesServiceFire();
+export const authService: AuthService = new AuthServiceJwt('http://localhost:8080/login')
+export const employeesService: EmployeesService = new EmployeesServiceRest(
+    'http://localhost:8080/employees',
+);
