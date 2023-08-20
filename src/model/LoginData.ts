@@ -1,5 +1,5 @@
 type LoginData = {
-    username: string;
+    email: string;
     password: string;
     gogleFl?:boolean
 }

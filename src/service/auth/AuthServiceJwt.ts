@@ -16,12 +16,15 @@ export default class AuthServiceJwt implements AuthService {
         return [];
     }
     async login(loginData: LoginData): Promise<UserData > {
+        const serverLoginData:any = {}; 
+        serverLoginData.username = loginData.email;
+        serverLoginData.password = loginData.password;
        const response = await fetch(this.url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify(serverLoginData)
        });
        
         return response.ok ? getUserData(await response.json()) : null;

@@ -8,8 +8,8 @@ export  default class AuthserviceFake implements AuthService {
     }
     async login(loginData: LoginData): Promise<UserData> {
         const UserData: UserData = 
-        { email: loginData.username,
-            role: loginData.username.includes('admin') ?
+        { email: loginData.email,
+            role: loginData.email.includes('admin') ?
             'admin' : 'user' }
         return UserData;
     }
