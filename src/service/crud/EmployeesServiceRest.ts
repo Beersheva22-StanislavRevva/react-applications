@@ -3,6 +3,7 @@ import Employee from "../../model/Employee";
 import { AUTH_DATA_JWT } from "./../auth/AuthServiceJwt";
 import EmployeesService from "./EmployeesService";
 import { CompatClient, Stomp } from "@stomp/stompjs";
+import ResponseObj from "../../model/ResponseObj";
 const TOPIC:string = "/topic/employees";
 
 async function getResponseText(response: Response): Promise<string> {
@@ -60,10 +61,12 @@ export default class EmployeesServiceRest implements EmployeesService {
     private urlService:string;
     private urlWebsocket:string;
     private stompClient: CompatClient;
+    private employees: Map <string, Employee>;
     constructor( baseUrl: string) { 
         this.urlService = `http://${baseUrl}/employees`;
         this.urlWebsocket = `ws://${baseUrl}/websocket/employees`;
         this.stompClient = Stomp.client(this.urlWebsocket);
+        this.employees = new Map <string, Employee>;
     }
     async updateEmployee(empl: Employee): Promise<Employee> {
         const response = await fetchRequest(this.getUrlWithId(empl.id!),
@@ -77,10 +80,11 @@ export default class EmployeesServiceRest implements EmployeesService {
     }
     private subscriberNext(): void {
         
-        fetchAllEmployees(this.urlService).then(employees => {
-           this.subscriber?.next(employees);
-            
-        })
+        fetchAllEmployees(this.urlService).then(empl => {
+        (empl as Employee[]).forEach(e => this.employees.set(e.id, e));
+        //this.subscriber?.next(Array.from(this.employees.values()));
+        this.subscriber?.next(empl);
+            })
         .catch(error => this.subscriber?.next(error));
     }
     async deleteEmployee(id: any): Promise<void> {
@@ -102,8 +106,9 @@ export default class EmployeesServiceRest implements EmployeesService {
     private connectWS() {
          this.stompClient.connect({}, () => {
             this.stompClient?.subscribe(TOPIC, message => {
-                console.log(message.body);                
-                this.subscriberNext();
+                console.log(message.body);
+                this.editEmployeesMap(JSON.parse(message.body));               
+                
             })
         },(error:any) => (this.subscriber?.next(JSON.stringify(error))), () => console.log("websocket disconnected"));
     }
@@ -119,5 +124,19 @@ export default class EmployeesServiceRest implements EmployeesService {
            return response.json();
 
     }
-
+    private editEmployeesMap(responseObj: ResponseObj) {
+       switch (responseObj.task) {
+        case "add":
+           this.employees.set(responseObj.employee.id, responseObj.employee);
+           break;
+        case "delete":
+            this.employees.delete(responseObj.employee.id);
+            break;
+        case "update":
+            this.employees.delete(responseObj.employee.id);
+            this.employees.set(responseObj.employee.id, responseObj.employee);
+            break;
+        }
+        this.subscriber?.next(Array.from(this.employees.values()));
+    }
 }
