@@ -10,7 +10,7 @@ import EmployeesServiceRest from "../service/crud/EmployeesServiceRest";
 //  new AuthServiceFire();
 //  export const employeesService: EmployeesService = 
 //     new EmployeesServiceFire();
-export const authService: AuthService = new AuthServiceJwt('http://localhost:3500/login')
+export const authService: AuthService = new AuthServiceJwt('http://localhost:3500/users/login')
 export const employeesService: EmployeesService = new EmployeesServiceRest(
     'http://localhost:3500/employees',
 );
