@@ -2,9 +2,9 @@ import { Observable, Subscriber } from "rxjs";
 import Employee from "../../model/Employee";
 import { AUTH_DATA_JWT } from "./../auth/AuthServiceJwt";
 import EmployeesService from "./EmployeesService";
-import { CompatClient, Stomp } from "@stomp/stompjs";
+
 import ResponseObj from "../../model/ResponseObj";
-const TOPIC:string = "/topic/employees";
+
 
 async function getResponseText(response: Response): Promise<string> {
     let res = '';
@@ -60,12 +60,12 @@ export default class EmployeesServiceRest implements EmployeesService {
     private subscriber: Subscriber <string | Employee[] > | undefined;
     private urlService:string;
     private urlWebsocket:string;
-    private stompClient: CompatClient;
+    private webSocket: WebSocket | undefined;
     private employees: Map <string, Employee>;
     constructor( baseUrl: string) { 
-        this.urlService = `http://${baseUrl}/employees`;
-        this.urlWebsocket = `ws://${baseUrl}/websocket/employees`;
-        this.stompClient = Stomp.client(this.urlWebsocket);
+        this.urlService = `http://${baseUrl}`;
+        this.urlWebsocket = `ws://${baseUrl}/websocket`;
+        
         this.employees = new Map <string, Employee>;
     }
     async updateEmployee(empl: Employee): Promise<Employee> {
@@ -97,26 +97,27 @@ export default class EmployeesServiceRest implements EmployeesService {
             this.observable = new Observable<Employee[] | string>(subscriber => {
                 this.subscriber = subscriber;
                 this.subscriberNext();
-                this.connectWS();
+               this.connectWS();
                 return () => this.disconnectWS();
             })
         }
         return this.observable;
     }
     private connectWS() {
-         this.stompClient.connect({}, () => {
-            this.stompClient?.subscribe(TOPIC, message => {
-                console.log(message.body);
-                this.editEmployeesMap(JSON.parse(message.body));               
-                
-            })
-        },(error:any) => (this.subscriber?.next(JSON.stringify(error))), () => console.log("websocket disconnected"));
+        this.webSocket = new WebSocket(this.urlWebsocket, localStorage.getItem(AUTH_DATA_JWT) || '');
+        this.webSocket.onmessage = message => {
+            console.log(message.data);
+            this.subscriberNext();
+            
+        }
     }
     private disconnectWS(): void {
-       this.stompClient?.disconnect();
+       this.webSocket?.close();
     }  
     async addEmployee(empl: Employee): Promise<Employee> {
-      
+        if (empl.id == 0) {
+            delete empl.id;    
+        }
             const response = await fetchRequest(this.urlService, {
                 method: 'POST',
                }, empl)
